@@ -1,8 +1,8 @@
 import './style.css';
-import * as THREE from 'three';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import * as THREE from './node_modules/three';
+//import { GLTFLoader } from './node_modules/three/examples/jsm/loaders/GLTFLoader.js';
+import { OBJLoader } from './node_modules/three/examples/jsm/loaders/OBJLoader';
+//import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 // Setup
 
@@ -24,11 +24,11 @@ renderer.render(scene, camera);
 
 
 //Models section of the code
-const geometry = new THREE.TorusGeometry(10, 3, 16, 100);
-const material = new THREE.MeshStandardMaterial({ color: 0xff6347 });
+//const geometry = new THREE.TorusGeometry(10, 3, 16, 100);
+//const material = new THREE.MeshStandardMaterial({ color: 0xff6347 });
 //const torus = new THREE.Mesh(geometry, material);
 
-const loader = new GLTFLoader(); //The loader for models (use g.ITF file format)
+//const loader = new GLTFLoader(); //The loader for models (use g.ITF file format)
 const objLoader = new OBJLoader();
 //const objLoader = new GLTFLoader(); //The loader for models (use g.ITF file format)
 
