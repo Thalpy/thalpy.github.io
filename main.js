@@ -16,8 +16,9 @@ const renderer = new THREE.WebGLRenderer({
 
 renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
-camera.position.setZ(30);
-camera.position.setX(-3);
+camera.position.setZ(6);
+camera.position.setX(3);
+camera.position.setY(-1.5);
 
 renderer.render(scene, camera);
 
@@ -25,7 +26,7 @@ renderer.render(scene, camera);
 //Models section of the code
 const geometry = new THREE.TorusGeometry(10, 3, 16, 100);
 const material = new THREE.MeshStandardMaterial({ color: 0xff6347 });
-const torus = new THREE.Mesh(geometry, material);
+//const torus = new THREE.Mesh(geometry, material);
 
 const loader = new GLTFLoader(); //The loader for models (use g.ITF file format)
 const objLoader = new OBJLoader();
@@ -40,6 +41,10 @@ const glassMaterial = new THREE.MeshPhongMaterial({
   opacity: 0.9,
   shininess: 75,
   envMap: scene.background
+});
+
+const StopperMaterial = new THREE.MeshStandardMaterial({
+  color: 0xB25252,
 });
 
 
@@ -61,7 +66,6 @@ const flask =  await loader.load( 'models/flask.glb', function ( gltf ) {
 
   //objLoader.setMaterials(glassMaterial);
 var flask = await objLoader.load('models/flask.obj', function (object) {
-    object.material = glassMaterial;
     object.name = "flask";
 
     object.traverse( function ( child ) {
@@ -70,10 +74,72 @@ var flask = await objLoader.load('models/flask.obj', function (object) {
       }
     });
     scene.add(object);
-    //ourObj2 = object;
-    //object.position.z -= 70;
-    object.rotation.x = 0;
+    //object.position.x = -2;
+    object.position.y = 10;
+    //object.position.z = 25;
     flask = object;
+});
+
+var beaker = await objLoader.load('models/beaker.obj', function (object) {
+  object.name = "beaker";
+
+  object.traverse( function ( child ) {
+    if ( child instanceof THREE.Mesh ) {
+        child.material = glassMaterial;
+    }
+  });
+  scene.add(object);
+  object.position.x = 5.5;
+  object.position.y = -2.2;
+  object.position.z = 2;
+  object.rotation.y = 1.25;
+  beaker = object;
+});
+
+var liebig = await objLoader.load('models/liebig.obj', function (object) {
+  object.name = "liebig";
+
+  object.traverse( function ( child ) {
+    if ( child instanceof THREE.Mesh ) {
+        child.material = glassMaterial;
+    }
+  });
+  scene.add(object);
+  object.position.x = 1.8;
+  object.position.y = -0.2;
+  object.position.z = 1;
+  object.rotation.y = 159.95;
+  liebig = object;
+});
+
+var sidearm = await objLoader.load('models/sidearm.obj', function (object) {
+  object.name = "sidearm";
+
+  object.traverse( function ( child ) {
+    if ( child instanceof THREE.Mesh ) {
+        child.material = glassMaterial;
+    }
+  });
+  scene.add(object);
+  object.position.x = -1.7;
+  object.position.y = 0.3;
+  //object.position.z = 25;
+  sidearm = object;
+});
+
+var stopper = await objLoader.load('models/stopper.obj', function (object) {
+  object.name = "stopper";
+
+  object.traverse( function ( child ) {
+    if ( child instanceof THREE.Mesh ) {
+        child.material = StopperMaterial;
+    }
+  });
+  scene.add(object);
+  object.position.x = -2;
+  object.position.y = 2;
+  //object.position.z = 25;
+  stopper = object;
 });
 
 function loadOBJ(name){
@@ -115,7 +181,7 @@ const thing = objLoader.load(
 //scene.add(flask);
 //flask.material = glassMaterial;
  
-scene.add(torus);
+//scene.add(torus);
 //var flask = scene.getObjectByName("Flask");
 //flask.material = glassMaterial;
 
@@ -152,7 +218,7 @@ function addStar() {
 
 // Background
 
-const spaceTexture = new THREE.TextureLoader().load('space.jpg');
+const spaceTexture = new THREE.TextureLoader().load('background_lab.png');
 scene.background = spaceTexture;
 
 // Avatar
@@ -187,7 +253,8 @@ jeff.position.x = 2;
 // Scroll Animation
 
 function moveCamera() {
-  const t = document.body.getBoundingClientRect().top;
+  
+
   moon.rotation.x += 0.05;
   moon.rotation.y += 0.075;
   moon.rotation.z += 0.05;
@@ -195,12 +262,19 @@ function moveCamera() {
   jeff.rotation.y += 0.01;
   jeff.rotation.z += 0.01;
 
-  camera.position.z = t * -0.01;
-  camera.position.x = t * -0.0002;
-  camera.rotation.y = t * -0.0002;
+  if(flask != null){
+
+    
+  }
+
+  
+  //const t = document.body.getBoundingClientRect().top;
+  //camera.position.z = t * -0.01;
+  //camera.position.x = t * -0.0002;
+  //camera.rotation.y = t * -0.0002;
 }
 
-document.body.onscroll = moveCamera;
+//document.body.onscroll = moveCamera;
 moveCamera();
 
 // Animation Loop
@@ -208,15 +282,17 @@ moveCamera();
 function animate() {
   requestAnimationFrame(animate);
 
-  torus.rotation.x += 0.01;
-  torus.rotation.y += 0.005;
-  torus.rotation.z += 0.01;
+  var scrollpos = document.body.getBoundingClientRect().top;
+  //var wholepos = document.body.height;
+  //console.log("scroll position:" + wholepos);
+  //-4867 total size
 
   
   if(flask != null){
-    flask.rotation.x += 0.01;
-    flask.rotation.y += 0.005;
-    flask.rotation.z += 0.01;
+    //Target position -2, -1
+    flask.position.x = Math.max(scrollpos/200, -2);
+    flask.position.y = Math.min(-5 + (-scrollpos/100), -1);
+    //flask.position.x = Math.max(Math.min(flask.position.x + scrollpos, -2), 0);
   }
 
   moon.rotation.x += 0.005;
@@ -226,18 +302,4 @@ function animate() {
   renderer.render(scene, camera);
 }
 
-function animateFlask() {
-  requestAnimationFrame(animate);
-
-  moon.rotation.x += 0.005;
-
-
-  // controls.update();
-
-  renderer.render(scene, camera);
-}
-
 animate();
-animateFlask();
-
-
