@@ -1,8 +1,9 @@
 import './style.css';
-//import * as THREE from 'three';
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.117.1/build/three.module.js';
+import * as THREE from 'three';
+//import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.117.1/build/three.module.js';
 //import { GLTFLoader } from './node_modules/three/examples/jsm/loaders/GLTFLoader.js';
-import { OBJLoader } from 'https://cdn.jsdelivr.net/gh/mrdoob/three.js/examples/jsm/loaders/OBJLoader.js';
+import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
+//import { OBJLoader } from 'https://cdn.jsdelivr.net/gh/mrdoob/three.js/examples/jsm/loaders/OBJLoader.js';
 //import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 // Setup
@@ -23,6 +24,28 @@ camera.position.setY(-1.5);
 
 renderer.render(scene, camera);
 
+// Background
+
+const spaceTexture = await new THREE.TextureLoader().load('background_lab.png');
+scene.background = spaceTexture;
+
+// Lights
+
+var hemiLight = new THREE.HemisphereLight( 0xffffff, 0x444444 );
+hemiLight.position.set( 0, 300, 0 );
+scene.add( hemiLight );
+
+var dirLight = new THREE.DirectionalLight( 0xffffff );
+dirLight.position.set( 75, 300, -75 );
+scene.add( dirLight );
+
+const pointLight = new THREE.PointLight(0xffffff);
+pointLight.position.set(5, 5, 5);
+
+const ambientLight = new THREE.AmbientLight(0xffffff);
+scene.add(pointLight, ambientLight);
+
+
 
 //Models section of the code
 //const geometry = new THREE.TorusGeometry(10, 3, 16, 100);
@@ -34,15 +57,33 @@ const objLoader = new OBJLoader();
 //const objLoader = new GLTFLoader(); //The loader for models (use g.ITF file format)
 
 //Materials
-const glassMaterial = new THREE.MeshPhongMaterial({
+const glassMaterial2 = new THREE.MeshPhongMaterial({
   color: 0x8282d2,
 //      envMap: that.textureCube,
   refractionRatio: 0.8,
   transparent: true,
-  opacity: 0.9,
-  shininess: 75,
-  envMap: scene.background
+  opacity: 0.8,
+  shininess: 50,
+  specular: 0xfff8f8,
+  //envMap: spaceTexture
 });
+
+const glassMaterial = new THREE.MeshPhysicalMaterial({
+  //color: 0x8282d2,
+  metalness: .9,
+  roughness: .05,
+  shininess: 100,
+  envMap: spaceTexture,
+  envMapIntensity: 1,
+  clearcoat: 1,
+  transparent: true,
+  transmission: .95,
+  opacity: .55,
+  reflectivity: 0.5,
+  refractionRatio: 0.985,
+  ior: 0.9,
+  side: THREE.BackSide,
+  })
 
 const StopperMaterial = new THREE.MeshStandardMaterial({
   color: 0xB25252,
@@ -186,13 +227,6 @@ const thing = objLoader.load(
 //var flask = scene.getObjectByName("Flask");
 //flask.material = glassMaterial;
 
-// Lights
-
-const pointLight = new THREE.PointLight(0xffffff);
-pointLight.position.set(5, 5, 5);
-
-const ambientLight = new THREE.AmbientLight(0xffffff);
-scene.add(pointLight, ambientLight);
 
 // Helpers
 
@@ -216,11 +250,6 @@ function addStar() {
 }
 
 //Array(200).fill().forEach(addStar);
-
-// Background
-
-const spaceTexture = new THREE.TextureLoader().load('background_lab.png');
-scene.background = spaceTexture;
 
 // Avatar
 
@@ -291,9 +320,29 @@ function animate() {
   
   if(flask != null){
     //Target position -2, -1
-    flask.position.x = Math.max(scrollpos/200, -2);
+    flask.position.x = Math.min(-5 + (-scrollpos/150), -2);
     flask.position.y = Math.min(-5 + (-scrollpos/100), -1);
     //flask.position.x = Math.max(Math.min(flask.position.x + scrollpos, -2), 0);
+  }
+  if(beaker != null){
+    //5.5, -2.2;
+    beaker.position.x = Math.max(scrollpos/400, 5.5);
+    beaker.position.y = Math.min(-7 + (-scrollpos/200), -2.2);
+  }
+  if(sidearm != null){
+    //-1.7, 0.3;
+    sidearm.position.x = Math.max(scrollpos/400, -1.7);
+    sidearm.position.y = Math.max(6 + (scrollpos/200), 0.3);
+  }
+  if(stopper != null){
+    //-2, 2
+    //stopper.position.x = -2;
+    stopper.position.y = Math.max(6 + (scrollpos/320), 1.8);
+  }
+  if(liebig != null){
+    //1.8, -0.2, 1
+    liebig.position.x = Math.max(6 + (scrollpos/500), 1.8);
+    liebig.position.y = Math.max(6 + (scrollpos/250), -0.2);
   }
 
   moon.rotation.x += 0.005;
