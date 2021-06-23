@@ -1,8 +1,8 @@
 import './style.css';
-import * as THREE from 'three';
-//import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.117.1/build/three.module.js';
+//import * as THREE from 'three';
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.117.1/build/three.module.js';
 //import { GLTFLoader } from './node_modules/three/examples/jsm/loaders/GLTFLoader.js';
-import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
+import { OBJLoader } from 'https://cdn.jsdelivr.net/gh/mrdoob/three.js/examples/jsm/loaders/OBJLoader.js';
 //import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 // Setup
