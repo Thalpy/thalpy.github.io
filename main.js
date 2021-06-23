@@ -1,6 +1,7 @@
 import './style.css';
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 // Setup
@@ -27,38 +28,96 @@ const material = new THREE.MeshStandardMaterial({ color: 0xff6347 });
 const torus = new THREE.Mesh(geometry, material);
 
 const loader = new GLTFLoader(); //The loader for models (use g.ITF file format)
+const objLoader = new OBJLoader();
+//const objLoader = new GLTFLoader(); //The loader for models (use g.ITF file format)
 
 //Materials
 const glassMaterial = new THREE.MeshPhongMaterial({
-  color: 0xf2f2f2,
+  color: 0x8282d2,
 //      envMap: that.textureCube,
   refractionRatio: 0.8,
   transparent: true,
-  opacity: 0.8,
-  shininess: 75
-  //envMap: 'reflection'
+  opacity: 0.9,
+  shininess: 75,
+  envMap: scene.background
 });
 
-var flask = THREE.Mesh;
+
 //Loading outside models
-loader.load( 'models/flask.glb', function ( gltf ) {
+/*
+const flask =  await loader.load( 'models/flask.glb', function ( gltf ) {
   scene.add( gltf.scene );
-  gltf.material = glassMaterial;
+  gltf.material = new THREE.MeshStandardMaterial({ color: 0xff6347 });;
   //flask = gltf;
   //gltf.color = 0xf2f2f2;
-  flask = gltf.Mesh;
+  //flask = gltf.Mesh;
   //return gltf.Mesh;
 }, undefined, function ( error ) {
 
   console.error( error );
 
 } );
+*/
 
-//flask.material = glassMaterial;
+  //objLoader.setMaterials(glassMaterial);
+var flask = await objLoader.load('models/flask.obj', function (object) {
+    object.material = glassMaterial;
+    object.name = "flask";
+
+    object.traverse( function ( child ) {
+      if ( child instanceof THREE.Mesh ) {
+          child.material = glassMaterial;
+      }
+    });
+    scene.add(object);
+    //ourObj2 = object;
+    //object.position.z -= 70;
+    object.rotation.x = 0;
+    flask = object;
+});
+
+function loadOBJ(name){
+
+  return null
+}
+
+//Loading outside models
+// load a resource
+/*
+const thing = objLoader.load(
+	// resource URL
+	'models/flask.obj',
+	// called when resource is loaded
+	function ( object ) {
+
+		object.material = glassMaterial;
+    object.position.x += 5;
+    scene.add( object );
+    
+    flask = object.geometry;
+    return object;
+	},
+	// called when loading is in progresses
+	function ( xhr ) {
+
+		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+
+	},
+	// called when loading has errors
+	function ( error ) {
+
+		console.log( 'An error happened' );
+
+	}
+);
+*/
+
 //scene.add(flask);
 //flask.material = glassMaterial;
  
 scene.add(torus);
+//var flask = scene.getObjectByName("Flask");
+//flask.material = glassMaterial;
 
 // Lights
 
@@ -89,7 +148,7 @@ function addStar() {
   scene.add(star);
 }
 
-Array(200).fill().forEach(addStar);
+//Array(200).fill().forEach(addStar);
 
 // Background
 
@@ -98,7 +157,7 @@ scene.background = spaceTexture;
 
 // Avatar
 
-const jeffTexture = new THREE.TextureLoader().load('jeff.png');
+const jeffTexture = new THREE.TextureLoader().load('PolyCat.png');
 
 const jeff = new THREE.Mesh(new THREE.BoxGeometry(3, 3, 3), new THREE.MeshBasicMaterial({ map: jeffTexture }));
 
@@ -153,6 +212,13 @@ function animate() {
   torus.rotation.y += 0.005;
   torus.rotation.z += 0.01;
 
+  
+  if(flask != null){
+    flask.rotation.x += 0.01;
+    flask.rotation.y += 0.005;
+    flask.rotation.z += 0.01;
+  }
+
   moon.rotation.x += 0.005;
 
   // controls.update();
@@ -163,11 +229,8 @@ function animate() {
 function animateFlask() {
   requestAnimationFrame(animate);
 
-  flask.rotation.x += 0.01;
-  flask.rotation.y += 0.005;
-  flask.rotation.z += 0.01;
-
   moon.rotation.x += 0.005;
+
 
   // controls.update();
 
@@ -176,3 +239,5 @@ function animateFlask() {
 
 animate();
 animateFlask();
+
+
