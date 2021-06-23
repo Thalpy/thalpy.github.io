@@ -1,5 +1,6 @@
 import './style.css';
-import * as THREE from './node_modules/three';
+//import * as THREE from './node_modules/three';
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.117.1/build/three.module.js';
 //import { GLTFLoader } from './node_modules/three/examples/jsm/loaders/GLTFLoader.js';
 import { OBJLoader } from './node_modules/three/examples/jsm/loaders/OBJLoader';
 //import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
